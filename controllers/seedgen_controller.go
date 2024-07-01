@@ -640,6 +640,16 @@ func (r *SeedGeneratorReconciler) validateSystem(ctx context.Context) (msg strin
 		return
 	}
 
+	// Ensure the minimum supported version for installed OADP
+	if oadpSupportedVersion, err := r.BackupRestore.CheckOadpMinimumVersion(ctx); !oadpSupportedVersion {
+		if err != nil {
+			msg = "Failure occurred when checking OADP version in system validation"
+		} else {
+			msg = fmt.Sprintf("Rejected: Cluster must have OADP version >=%v", backuprestore.OadpMinSupportedVersion)
+		}
+		return
+	}
+
 	return
 }
 
